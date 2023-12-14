@@ -76,7 +76,6 @@ def sales():
     }
     return render_template("dashboard/general_list.html", **context)
 
-
 def sales_manage(id=None):
     if id:
         sale = Sale.get_by_id(id)

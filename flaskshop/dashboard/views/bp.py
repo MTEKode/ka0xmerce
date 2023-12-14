@@ -237,4 +237,5 @@ def flaskshop_load_blueprints(app):
     bp.add_url_rule("/sales/<id>/edit", view_func=sales_manage, methods=["GET", "POST"])
     bp.add_url_rule("/sales/<int:id>/delete", view_func=sale_del, methods=["DELETE"])
 
+
     app.register_blueprint(bp, url_prefix="/dashboard")

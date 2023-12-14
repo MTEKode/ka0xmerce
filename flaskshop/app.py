@@ -2,7 +2,8 @@
 """The app module, containing the app factory function."""
 import sys
 
-from flask import Flask, render_template
+from flask import Flask, abort, render_template, g, redirect, request, url_for
+
 
 from flaskshop import commands
 from flaskshop.extensions import (
@@ -20,6 +21,8 @@ from flaskshop.plugin.models import PluginRegistry
 from flaskshop.settings import Config
 from flaskshop.utils import jinja_global_varibles, log_slow_queries
 
+from domains.subdomain.models import find_subdomain
+from domains.subdomain.commands import create_emeraldlion_subdomain, create_starboy_subdomain
 
 def create_app(config_object=Config):
     app = Flask(__name__.split(".")[0])
@@ -44,7 +47,14 @@ def register_extensions(app):
     debug_toolbar.init_app(app)
     migrate.init_app(app, db)
     bootstrap.init_app(app)
+    app.before_request(lambda: before_request(app))
     babel.init_app(app)
+
+
+def before_request(app):
+    g.subdomain = find_subdomain(request.host.split(':')[0])
+    if g.subdomain is None:
+        abort(500)
 
 
 def register_blueprints(app):
@@ -85,6 +95,8 @@ def register_commands(app):
     app.cli.add_command(commands.seed)
     app.cli.add_command(commands.flushrdb)
     app.cli.add_command(commands.reindex)
+    app.cli.add_command(create_starboy_subdomain)
+    app.cli.add_command(create_emeraldlion_subdomain)
 
 
 def load_plugins(app):

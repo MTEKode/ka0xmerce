@@ -66,13 +66,13 @@ class Config:
 
     MESSAGE_QUOTA = 10
 
-    LANGUAGES = {"en": "English", "bg": "Български"}
-    BABEL_DEFAULT_LOCALE = os.getenv("BABEL_DEFAULT_LOCALE", "en_US")
+    LANGUAGES = {"es": "Español", "en": "English"}
+    BABEL_DEFAULT_LOCALE = os.getenv("BABEL_DEFAULT_LOCALE", "es_ES")
     BABEL_DEFAULT_TIMEZONE = os.getenv("BABEL_DEFAULT_TIMEZONE", "UTC")
     BABEL_TRANSLATION_DIRECTORIES = os.getenv(
         "BABEL_TRANSLATION_DIRECTORIES", "../translations"
     )
-    BABEL_CURRENCY = os.getenv("BABEL_CURRENCY", "USD")
+    BABEL_CURRENCY = os.getenv("BABEL_CURRENCY", "EUR")
 
     MAIL_SERVER = os.getenv("MAIL_SERVER", "localhost")
     MAIL_PORT = os.getenv("MAIL_PORT", 25)

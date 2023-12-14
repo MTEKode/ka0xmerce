@@ -57,3 +57,4 @@ migrations/
 /venv/
 /women_shop_empty.backup
 /.flaskenv
+/.history
