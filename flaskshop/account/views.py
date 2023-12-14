@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """User views."""
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, flash, g, redirect, render_template, request, url_for
 from flask_babel import lazy_gettext
 from flask_login import current_user, login_required, login_user, logout_user
 from pluggy import HookimplMarker
@@ -18,7 +18,7 @@ impl = HookimplMarker("flaskshop")
 def index():
     form = ChangePasswordForm(request.form)
     orders = Order.get_current_user_orders()
-    return render_template("account/details.html", form=form, orders=orders)
+    return render_template(f"subdomains/{g.subdomain.name}/account/details.html", form=form, orders=orders)
 
 
 def login():
@@ -31,7 +31,7 @@ def login():
         return redirect(redirect_url)
     else:
         flash_errors(form)
-    return render_template("account/login.html", form=form)
+    return render_template(f"subdomains/{g.subdomain.name}/account/login.html", form=form)
 
 
 def resetpwd():
@@ -46,7 +46,7 @@ def resetpwd():
         return redirect(url_for("account.login"))
     else:
         flash_errors(form)
-    return render_template("account/login.html", form=form, reset=True)
+    return render_template(f"subdomains/{g.subdomain.name}/account/login.html", form=form, reset=True)
 
 
 @login_required
@@ -72,7 +72,7 @@ def signup():
         return redirect(url_for("public.home"))
     else:
         flash_errors(form)
-    return render_template("account/signup.html", form=form)
+    return render_template(f"subdomains/{g.subdomain.name}/account/signup.html", form=form)
 
 
 def set_password():
@@ -88,7 +88,7 @@ def set_password():
 def addresses():
     """List addresses."""
     addresses = current_user.addresses
-    return render_template("account/addresses.html", addresses=addresses)
+    return render_template(f"subdomains/{g.subdomain.name}/account/addresses.html", addresses=addresses)
 
 
 def edit_address():

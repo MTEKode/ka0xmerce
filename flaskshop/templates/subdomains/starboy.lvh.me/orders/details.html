@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "subdomains/starboy.lvh.me/base.html" %}
 
 
 {% block title %}
@@ -35,7 +35,7 @@ Order {{ order }}
             {% trans %}Order{% endtrans %}: {{ order.token }}<br>
             {% trans %}Order Status{% endtrans %}: {{ order.status_human }}
         </h2>
-        {% include "orders/_ordered_items_table.html" %}
+        {% include "subdomains/starboy.lvh.me/orders/_ordered_items_table.html" %}
         <div class="order-notes">
             {% if order.notes %}
             <h2 class="order-notes__header">{% trans %}Your note{% endtrans %}</h2>

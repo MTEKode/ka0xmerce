@@ -1,4 +1,4 @@
-from flask import redirect, render_template, request, url_for, flash
+from flask import g, redirect, render_template, request, url_for, flash
 from flask_babel import lazy_gettext
 
 from flaskshop.constant import DiscountValueTypeKinds, VoucherTypeKinds
@@ -27,7 +27,7 @@ def vouchers():
         "pagination": pagination,
         "identity": lazy_gettext("vouchers"),
     }
-    return render_template("dashboard/general_list.html", **context)
+    return render_template(f"subdomains/{g.subdomain.name}/dashboard/general_list.html", **context)
 
 
 def vouchers_manage(id=None):
@@ -52,7 +52,7 @@ def vouchers_manage(id=None):
         return redirect(url_for("dashboard.vouchers"))
 
     context = {"form": form, "title": lazy_gettext("Voucher")}
-    return render_template("general_edit.html", **context)
+    return render_template(f"subdomains/{g.subdomain.name}/general_edit.html", **context)
 
 
 voucher_del = wrap_partial(item_del, Voucher)
@@ -74,7 +74,7 @@ def sales():
         "pagination": pagination,
         "identity": lazy_gettext("sales"),
     }
-    return render_template("dashboard/general_list.html", **context)
+    return render_template(f"subdomains/{g.subdomain.name}/dashboard/general_list.html", **context)
 
 def sales_manage(id=None):
     if id:
@@ -103,7 +103,7 @@ def sales_manage(id=None):
         return redirect(url_for("dashboard.sales"))
 
     context = {"form": form, "title": lazy_gettext("Sale")}
-    return render_template("general_edit.html", **context)
+    return render_template(f"subdomains/{g.subdomain.name}/general_edit.html", **context)
 
 
 sale_del = wrap_partial(item_del, Sale)

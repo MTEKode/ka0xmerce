@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
+from flask import Blueprint, flash, g, jsonify, redirect, render_template, request, url_for
 from flask_babel import lazy_gettext
 from flask_login import current_user, login_required
 from pluggy import HookimplMarker
@@ -16,7 +16,7 @@ impl = HookimplMarker("flaskshop")
 
 
 def cart_index():
-    return render_template("checkout/cart.html")
+    return render_template(f"subdomains/{g.subdomain.name}/checkout/cart.html")
 
 
 def update_cartline(id):

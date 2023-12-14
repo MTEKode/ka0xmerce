@@ -1,4 +1,4 @@
-{% extends "products/product_list_base.html" %}
+{% extends "subdomains/starboy.lvh.me/products/product_list_base.html" %}
 
 
 {% block breadcrumb_part %}
@@ -10,6 +10,6 @@
 
 {% block filters %}
   {% with category=object %}
-  {% include "category/filters.html" %}
+  {% include "subdomains/starboy.lvh.me/category/filters.html" %}
   {% endwith %}
 {% endblock filters %}

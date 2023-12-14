@@ -4,6 +4,7 @@ from datetime import datetime
 from flask import (
     Blueprint,
     abort,
+    g,
     redirect,
     render_template,
     request,
@@ -33,7 +34,7 @@ def show(token):
     order = Order.query.filter_by(token=token).first()
     if not order.is_self_order:
         abort(403, lazy_gettext("This is not your order!"))
-    return render_template("orders/details.html", order=order)
+    return render_template(f"subdomains/{g.subdomain.name}/orders/details.html", order=order)
 
 
 def create_payment(token, payment_method):
@@ -103,7 +104,7 @@ def payment_success():
         else:
             print(res["msg"])
 
-    return render_template("orders/checkout_success.html")
+    return render_template(f"subdomains/{g.subdomain.name}/orders/checkout_success.html")
 
 
 @login_required
@@ -112,7 +113,7 @@ def cancel_order(token):
     if not order.is_self_order:
         abort(403, "This is not your order!")
     order.cancel()
-    return render_template("orders/details.html", order=order)
+    return render_template(f"subdomains/{g.subdomain.name}/orders/details.html", order=order)
 
 
 @login_required
@@ -122,7 +123,7 @@ def receive(token):
         status=OrderStatusKinds.completed.value,
         ship_status=ShipStatusKinds.received.value,
     )
-    return render_template("orders/details.html", order=order)
+    return render_template(f"subdomains/{g.subdomain.name}/orders/details.html", order=order)
 
 
 @impl

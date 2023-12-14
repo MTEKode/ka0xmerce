@@ -1,4 +1,4 @@
-{% extends "checkout/details.html" %}
+{% extends "subdomains/starboy.lvh.me/checkout/details.html" %}
 {% import '_macros.html' as macros %}
 {% block forms %}
 <form method="post" novalidate class="checkout__shipping">
@@ -30,7 +30,7 @@
 
       <div class="checkout__new-address">
         <div class="address_show col-12 float-left">
-          {% include "account/partials/address_form.html" %}
+          {% include "subdomains/starboy.lvh.me/account/partials/address_form.html" %}
         </div>
       </div>
     </div>

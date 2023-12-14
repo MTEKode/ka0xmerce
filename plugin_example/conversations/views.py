@@ -5,6 +5,7 @@ from flask import (
     Blueprint,
     current_app,
     flash,
+    g,
     redirect,
     render_template,
     request,
@@ -66,7 +67,7 @@ class Inbox(MethodView):
             .paginate(page, 10, False)
         )
 
-        return render_template("inbox.html", conversations=conversations)
+        return render_template(f"subdomains/{g.subdomain.name}/inbox.html", conversations=conversations)
 
 
 class ViewConversation(MethodView):
@@ -181,7 +182,7 @@ class NewConversation(MethodView):
             flash(lazy_gettext("Message sent."), "success")
             return redirect(url_for("conversations_bp.sent"))
 
-        return render_template("message_form.html", form=form)
+        return render_template(f"subdomains/{g.subdomain.name}/message_form.html", form=form)
 
 
 class MoveConversation(MethodView):
@@ -241,7 +242,7 @@ class SentMessages(MethodView):
             .paginate(page, 10, False)
         )
 
-        return render_template("sent.html", conversations=conversations)
+        return render_template(f"subdomains/{g.subdomain.name}/sent.html", conversations=conversations)
 
 
 class TrashedMessages(MethodView):
@@ -260,7 +261,7 @@ class TrashedMessages(MethodView):
             .paginate(page, 10, False)
         )
 
-        return render_template("trash.html", conversations=conversations)
+        return render_template(f"subdomains/{g.subdomain.name}/trash.html", conversations=conversations)
 
 
 conversations_bp.add_url_rule(

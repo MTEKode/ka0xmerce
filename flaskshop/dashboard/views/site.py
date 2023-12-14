@@ -1,4 +1,4 @@
-from flask import flash, redirect, render_template, request, url_for
+from flask import flash, g, redirect, render_template, request, url_for
 from flask_babel import lazy_gettext
 
 from flaskshop.account.utils import admin_required
@@ -33,7 +33,7 @@ def shipping_methods():
         "pagination": pagination,
         "identity": "shipping_methods",
     }
-    return render_template("dashboard/general_list.html", **context)
+    return render_template(f"subdomains/{g.subdomain.name}/dashboard/general_list.html", **context)
 
 
 def shipping_methods_manage(id=None):
@@ -73,7 +73,7 @@ def site_menus():
         "pagination": pagination,
         "identity": "site_menus",
     }
-    return render_template("dashboard/general_list.html", **context)
+    return render_template(f"subdomains/{g.subdomain.name}/dashboard/general_list.html", **context)
 
 
 @admin_required
@@ -125,7 +125,7 @@ def dashboard_menus():
         "pagination": pagination,
         "identity": "dashboard_menus",
     }
-    return render_template("dashboard/general_list.html", **context)
+    return render_template(f"subdomains/{g.subdomain.name}/dashboard/general_list.html", **context)
 
 
 @admin_required
@@ -170,7 +170,7 @@ def site_pages():
         "pagination": pagination,
         "identity": "site_pages",
     }
-    return render_template("dashboard/general_list.html", **context)
+    return render_template(f"subdomains/{g.subdomain.name}/dashboard/general_list.html", **context)
 
 
 def site_pages_manage(id=None):
@@ -185,7 +185,7 @@ def site_pages_manage(id=None):
         page.save()
         flash(lazy_gettext("Page saved."), "success")
         return redirect(url_for("dashboard.site_pages"))
-    return render_template("site/site_page.html", form=form)
+    return render_template(f"subdomains/{g.subdomain.name}/site/site_page.html", form=form)
 
 
 site_page_del = wrap_partial(item_del, Page)
@@ -193,7 +193,7 @@ site_page_del = wrap_partial(item_del, Page)
 
 def plugin_list():
     plugins = PluginRegistry.query.all()
-    return render_template("site/plugin.html", plugins=plugins)
+    return render_template(f"subdomains/{g.subdomain.name}/site/plugin.html", plugins=plugins)
 
 
 def plugin_enable(id):
@@ -247,4 +247,4 @@ def site_setting():
 
 
 def config_index():
-    return render_template("site/index.html")
+    return render_template(f"subdomains/{g.subdomain.name}/site/index.html")

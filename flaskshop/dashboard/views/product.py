@@ -1,4 +1,4 @@
-from flask import redirect, render_template, request, url_for, flash
+from flask import g, redirect, render_template, request, url_for, flash
 from flask_babel import lazy_gettext
 
 from flaskshop.dashboard.forms import (
@@ -38,7 +38,7 @@ def attributes():
         "pagination": pagination,
         "identity": "attributes",
     }
-    return render_template("dashboard/general_list.html", **context)
+    return render_template(f"subdomains/{g.subdomain.name}/dashboard/general_list.html", **context)
 
 
 def attributes_manage(id=None):
@@ -79,7 +79,7 @@ def collections():
         "pagination": pagination,
         "identity": "collections",
     }
-    return render_template("dashboard/general_list.html", **context)
+    return render_template(f"subdomains/{g.subdomain.name}/dashboard/general_list.html", **context)
 
 
 def categories():
@@ -98,7 +98,7 @@ def categories():
         "pagination": pagination,
         "identity": "categories",
     }
-    return render_template("dashboard/general_list.html", **context)
+    return render_template(f"subdomains/{g.subdomain.name}/dashboard/general_list.html", **context)
 
 
 def collections_manage(id=None):
@@ -118,7 +118,7 @@ def collections_manage(id=None):
         collection.update_products(form.products_ids.data)
         flash(lazy_gettext("Collection saved."), "success")
         return redirect(url_for("dashboard.collections"))
-    return render_template("product/collection.html", form=form)
+    return render_template(f"subdomains/{g.subdomain.name}/product/collection.html", form=form)
 
 
 collection_del = wrap_partial(item_del, Collection)
@@ -141,7 +141,7 @@ def categories_manage(id=None):
         category.save()
         flash(lazy_gettext("Category saved."), "success")
         return redirect(url_for("dashboard.categories"))
-    return render_template("product/category.html", form=form)
+    return render_template(f"subdomains/{g.subdomain.name}/product/category.html", form=form)
 
 
 category_del = wrap_partial(item_del, Category)
@@ -164,7 +164,7 @@ def product_types():
         "pagination": pagination,
         "identity": "product_types",
     }
-    return render_template("dashboard/general_list.html", **context)
+    return render_template(f"subdomains/{g.subdomain.name}/dashboard/general_list.html", **context)
 
 
 def product_types_manage(id=None):
@@ -234,12 +234,12 @@ def products():
         "pagination": pagination,
         "categories": Category.query.all(),
     }
-    return render_template("product/list.html", **context)
+    return render_template(f"subdomains/{g.subdomain.name}/product/list.html", **context)
 
 
 def product_detail(id):
     product = Product.get_by_id(id)
-    return render_template("product/detail.html", product=product)
+    return render_template(f"subdomains/{g.subdomain.name}/product/detail.html", product=product)
 
 
 def product_manage(id=None):
@@ -272,7 +272,7 @@ def product_manage(id=None):
         flash(lazy_gettext("Product saved."), "success")
         return redirect(url_for("dashboard.product_detail", id=product.id))
     context = {"form": form, "product_type": product_type}
-    return render_template("product/product.html", **context)
+    return render_template(f"subdomains/{g.subdomain.name}/product/product.html", **context)
 
 
 product_del = wrap_partial(item_del, Product)

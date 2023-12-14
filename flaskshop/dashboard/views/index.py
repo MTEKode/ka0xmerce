@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import func
-from flask import render_template
+from flask import g, render_template
 
 from flaskshop.account.models import User
 from flaskshop.constant import OrderEvents, OrderStatusKinds
@@ -53,4 +53,4 @@ def index():
         "activity": activity,
         "order_events": OrderEvents,
     }
-    return render_template("index.html", **context)
+    return render_template(f"subdomains/{g.subdomain.name}/index.html", **context)

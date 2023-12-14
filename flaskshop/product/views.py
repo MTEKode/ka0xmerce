@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Product views."""
-from flask import Blueprint, jsonify, redirect, render_template, request, url_for
+from flask import Blueprint, g, jsonify, redirect, render_template, request, url_for
 from flask_login import login_required
 from pluggy import HookimplMarker
 
@@ -16,7 +16,7 @@ def show(id, form=None):
     product = Product.get_by_id(id)
     if not form:
         form = AddCartForm(request.form, product=product)
-    return render_template("products/details.html", product=product, form=form)
+    return render_template(f"subdomains/{g.subdomain.name}/products/details.html", product=product, form=form)
 
 
 @login_required
@@ -38,13 +38,13 @@ def variant_price(id):
 def show_category(id):
     page = request.args.get("page", 1, type=int)
     ctx = Category.get_product_by_category(id, page)
-    return render_template("category/index.html", **ctx)
+    return render_template(f"subdomains/{g.subdomain.name}/category/index.html", **ctx)
 
 
 def show_collection(id):
     page = request.args.get("page", 1, type=int)
     ctx = ProductCollection.get_product_by_collection(id, page)
-    return render_template("category/index.html", **ctx)
+    return render_template(f"subdomains/{g.subdomain.name}/category/index.html", **ctx)
 
 
 @impl

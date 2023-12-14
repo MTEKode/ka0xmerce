@@ -1,4 +1,4 @@
-from flask import render_template, request, flash
+from flask import g, render_template, request, flash
 from flask_babel import lazy_gettext
 
 from flaskshop.constant import OrderStatusKinds
@@ -36,23 +36,23 @@ def orders():
         "pagination": pagination,
         "order_stats_kinds": OrderStatusKinds,
     }
-    return render_template("order/list.html", **context)
+    return render_template(f"subdomains/{g.subdomain.name}/order/list.html", **context)
 
 
 def order_detail(id):
     order = Order.get_by_id(id)
-    return render_template("order/detail.html", order=order)
+    return render_template(f"subdomains/{g.subdomain.name}/order/detail.html", order=order)
 
 
 def send_order(id):
     order = Order.get_by_id(id)
     order.delivered()
     flash(lazy_gettext("Order is sent."), "success")
-    return render_template("order/detail.html", order=order)
+    return render_template(f"subdomains/{g.subdomain.name}/order/detail.html", order=order)
 
 
 def draft_order(id):
     order = Order.get_by_id(id)
     order.draft()
     flash(lazy_gettext("Order is draft."), "success")
-    return render_template("order/detail.html", order=order)
+    return render_template(f"subdomains/{g.subdomain.name}/order/detail.html", order=order)

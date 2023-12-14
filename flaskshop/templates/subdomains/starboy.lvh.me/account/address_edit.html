@@ -1,4 +1,4 @@
-{% extends "no_nav_base.html" %}
+{% extends "subdomains/starboy.lvh.me/no_nav_base.html" %}
 
 {% block title %}
 {% if address_id %}Edit address{% else %}New address{% endif %}
@@ -31,7 +31,7 @@
                 endif %}
             </h2>
             <div class="account__address-edit__form">
-                {% include "account/partials/address_form.html" %}
+                {% include "subdomains/starboy.lvh.me/account/partials/address_form.html" %}
             </div>
             <div class="text-end p-2">
                 <button type="submit" class="btn btn-primary narrow">

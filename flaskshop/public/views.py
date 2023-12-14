@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Public section, including homepage and signup."""
-from flask import Blueprint, current_app, render_template, request, send_from_directory
+from flask import Blueprint, current_app, g, render_template, request, send_from_directory
 from pluggy import HookimplMarker
 
 from flaskshop.account.models import User
@@ -21,11 +21,11 @@ def load_user(user_id):
 
 def home():
     products = Product.get_featured_product()
-    return render_template("public/home.html", products=products)
+    return render_template(f"subdomains/{g.subdomain.name}/public/home.html", products=products)
 
 
 def style():
-    return render_template("public/style_guide.html")
+    return render_template(f"subdomains/{g.subdomain.name}/public/style_guide.html")
 
 
 def favicon():
@@ -51,7 +51,7 @@ def search():
 
 def show_page(identity):
     page = Page.get_by_identity(identity)
-    return render_template("public/page.html", page=page)
+    return render_template(f"subdomains/{g.subdomain.name}/public/page.html", page=page)
 
 
 @impl

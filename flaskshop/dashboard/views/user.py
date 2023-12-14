@@ -1,4 +1,4 @@
-from flask import flash, redirect, render_template, request, url_for
+from flask import flash, g, redirect, render_template, request, url_for
 from flask_babel import lazy_gettext
 from flask_login import current_user
 from sqlalchemy import or_
@@ -33,7 +33,7 @@ def users():
         "props": props,
         "pagination": pagination,
     }
-    return render_template("user/list.html", **context)
+    return render_template(f"subdomains/{g.subdomain.name}/user/list.html", **context)
 
 
 def user(user_id):
@@ -41,7 +41,7 @@ def user(user_id):
     addresses = user.addresses
     orders = Order.get_user_orders(user_id)
     context = {"user": user, "addresses": addresses, "orders": orders}
-    return render_template("user/detail.html", **context)
+    return render_template(f"subdomains/{g.subdomain.name}/user/detail.html", **context)
 
 
 def user_edit(user_id):
@@ -69,7 +69,7 @@ def user_edit(user_id):
                 UserRole.create(user_id=user.id, role_id=selected_role.id)
         flash(lazy_gettext("User saved."), "success")
         return redirect(url_for("dashboard.user", user_id=user_id))
-    return render_template("general_edit.html", form=form, title=lazy_gettext("User"))
+    return render_template(f"subdomains/{g.subdomain.name}/general_edit.html", form=form, title=lazy_gettext("User"))
 
 
 user_del = wrap_partial(item_del, User)

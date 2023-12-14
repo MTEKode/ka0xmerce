@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "subdomains/starboy.lvh.me/base.html" %}
 {% from 'bootstrap5/pagination.html' import render_pagination %}
 {% block title %}{% trans %}Search results{% endtrans %}{% endblock %}
 
@@ -8,7 +8,7 @@
   <div class="col-12">
     {% if query and pagination.items %}
     <div class="row">
-      {% include "products/_items.html" %}
+      {% include "subdomains/starboy.lvh.me/products/_items.html" %}
     </div>
     <div class="row">
       <div class="m-auto">
