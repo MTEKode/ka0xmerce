@@ -38,7 +38,7 @@ def search():
     if current_app.config["USE_ES"]:
         pagination = Item.new_search(query, page)
     else:
-        pagination = Product.query.filter(Product.title.ilike(f"%{query}%")).paginate(
+        pagination = Product.kuery().filter(Product.title.ilike(f"%{query}%")).paginate(
             page
         )
     return render_template(

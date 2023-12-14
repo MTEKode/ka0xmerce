@@ -50,11 +50,11 @@ class RegisterForm(FlaskForm):
         initial_validation = super(RegisterForm, self).validate()
         if not initial_validation:
             return False
-        user = User.query.filter_by(username=self.username.data).first()
+        user = User.kuery().filter_by(username=self.username.data).first()
         if user:
             self.username.errors.append(lazy_gettext("Username already registered"))
             return False
-        user = User.query.filter_by(email=self.email.data).first()
+        user = User.kuery().filter_by(email=self.email.data).first()
         if user:
             self.email.errors.append(lazy_gettext("Email already registered"))
             return False
@@ -81,7 +81,7 @@ class ResetPasswd(FlaskForm):
             self.username.errors.append(lazy_gettext("Invalid"))
             return False
 
-        self.user = User.query.filter_by(email=self.username.data).first()
+        self.user = User.kuery().filter_by(email=self.username.data).first()
         if not self.user:
             self.username.errors.append(lazy_gettext("Unknown username"))
             return False
@@ -112,9 +112,9 @@ class LoginForm(FlaskForm):
             return False
 
         if "@" in self.username.data:
-            self.user = User.query.filter_by(email=self.username.data).first()
+            self.user = User.kuery().filter_by(email=self.username.data).first()
         else:
-            self.user = User.query.filter_by(username=self.username.data).first()
+            self.user = User.kuery().filter_by(username=self.username.data).first()
         if not self.user:
             self.username.errors.append(lazy_gettext("Unknown username"))
             return False

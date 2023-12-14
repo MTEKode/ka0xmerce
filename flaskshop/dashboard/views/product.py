@@ -108,7 +108,7 @@ def collections_manage(id=None):
     else:
         collection = Collection()
         form = CollectionForm()
-    form.products_ids.choices = [(p.id, p.title) for p in Product.query.all()]
+    form.products_ids.choices = [(p.id, p.title) for p in Product.kuery().all()]
     if form.validate_on_submit():
         collection.title = form.title.data
         image = form.bgimg_file.data

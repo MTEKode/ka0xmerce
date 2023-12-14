@@ -139,7 +139,7 @@ class Sale(Model):
 
     @classmethod
     def get_discounted_price(cls, product):
-        sale_product = SaleProduct.query.filter_by(product_id=product.id).first()
+        sale_product = SaleProduct.kuery().filter_by(product_id=product.id).first()
         if sale_product:
             sale = Sale.get_by_id(sale_product.sale_id)
         else:
@@ -167,7 +167,7 @@ class Sale(Model):
     @property
     def products_ids(self):
         at_ids = (
-            SaleProduct.query.with_entities(SaleProduct.product_id)
+            SaleProduct.kuery().with_entities(SaleProduct.product_id)
             .filter(SaleProduct.sale_id == self.id)
             .all()
         )
@@ -175,7 +175,7 @@ class Sale(Model):
 
     @property
     def products(self):
-        return Product.query.filter(
+        return Product.kuery().filter(
             Product.id.in_(id for id in self.products_ids)
         ).all()
 
@@ -200,7 +200,7 @@ class Sale(Model):
 
     def update_products(self, product_ids):
         origin_ids = (
-            SaleProduct.query.with_entities(SaleProduct.product_id)
+            SaleProduct.kuery().with_entities(SaleProduct.product_id)
             .filter_by(sale_id=self.id)
             .all()
         )
@@ -209,7 +209,7 @@ class Sale(Model):
         need_del = origin_ids - new_attrs
         need_add = new_attrs - origin_ids
         for id in need_del:
-            SaleProduct.query.filter_by(sale_id=self.id, product_id=id).first().delete(
+            SaleProduct.kuery().filter_by(sale_id=self.id, product_id=id).first().delete(
                 commit=False
             )
         for id in need_add:

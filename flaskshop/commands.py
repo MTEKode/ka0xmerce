@@ -213,5 +213,5 @@ def reindex():
     """clear elastic-search items."""
     Item._index.delete(ignore=404)
     Item.init()
-    products = Product.query.all()
+    products = Product.kuery().all()
     Item.bulk_update(products, op_type="create")

@@ -1,5 +1,6 @@
 from functools import reduce
 from operator import or_
+from flask import g
 
 from flask_login import UserMixin
 from libgravatar import Gravatar
@@ -8,6 +9,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from flaskshop.constant import Permission
 from flaskshop.database import Column, Model, db
 from flaskshop.extensions import bcrypt
+from flaskshop.subdomain.models import Subdomain
 
 
 class User(Model, UserMixin):
@@ -20,6 +22,7 @@ class User(Model, UserMixin):
     is_active = Column(db.Boolean(), default=False)
     open_id = Column(db.String(80), index=True)
     session_key = Column(db.String(80), index=True)
+    subdomain_id = Column(db.Integer())
 
     def __init__(self, username, email, password, **kwargs):
         super().__init__(username=username, email=email, password=password, **kwargs)
@@ -60,6 +63,10 @@ class User(Model, UserMixin):
         )
         return Role.query.filter(Role.id.in_(id for id, in at_ids)).all()
 
+    @property
+    def subdomain(self):
+        return Subdomain.get_by_id(self.subdomain)
+
     def delete(self):
         for addr in self.addresses:
             addr.delete()
@@ -79,6 +86,10 @@ class User(Model, UserMixin):
 
     def can_op(self):
         return self.can(Permission.OPERATOR)
+
+    @classmethod
+    def kuery(cls):
+        return cls.query.filter_by(subdomain_id=g.subdomain.id)
 
 
 class UserAddress(Model):

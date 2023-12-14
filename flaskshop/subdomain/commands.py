@@ -1,9 +1,9 @@
 import click
 from flask import current_app
 from flask.cli import with_appcontext
-from domains.subdomain.models import Subdomain
 
 from flaskshop.database import db
+from flaskshop.subdomain.models import Subdomain
 
 @click.command()
 @with_appcontext

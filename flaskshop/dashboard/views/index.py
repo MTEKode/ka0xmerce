@@ -18,11 +18,11 @@ def index():
 
     def get_order_status(status):
         return {
-            "count": Order.query.filter_by(status=status).count(),
+            "count": Order.kuery().filter_by(status=status).count(),
             "kind": status,
         }
 
-    onsale_products_count = Product.query.filter_by(on_sale=True).count()
+    onsale_products_count = Product.kuery().filter_by(on_sale=True).count()
 
     hot_product_ids = (
         db.session.query(OrderLine.product_id, func.count(OrderLine.product_id))
@@ -42,9 +42,9 @@ def index():
     activity = OrderEvent.query.order_by(OrderEvent.id.desc()).limit(10)
 
     context = {
-        "orders_total": Order.query.count(),
+        "orders_total": Order.kuery().count(),
         "orders_today": get_today_num(Order),
-        "users_total": User.query.count(),
+        "users_total": User.kuery().count(),
         "users_today": get_today_num(User),
         "order_unfulfill": get_order_status(OrderStatusKinds.unfulfilled.value),
         "order_fulfill": get_order_status(OrderStatusKinds.fulfilled.value),

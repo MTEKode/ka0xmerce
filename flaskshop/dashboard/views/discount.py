@@ -38,7 +38,7 @@ def vouchers_manage(id=None):
         voucher = Voucher()
         form = VoucherForm()
 
-    form.product_id.choices = [(p.id, p.title) for p in Product.query.all()]
+    form.product_id.choices = [(p.id, p.title) for p in Product.kuery().all()]
     form.category_id.choices = [(c.id, c.title) for c in Category.query.all()]
     form.discount_value_type.choices = [
         (k.value, k.name) for k in DiscountValueTypeKinds
@@ -84,7 +84,7 @@ def sales_manage(id=None):
         sale = Sale()
         form = SaleForm()
 
-    form.products_ids.choices = [(p.id, p.title) for p in Product.query.all()]
+    form.products_ids.choices = [(p.id, p.title) for p in Product.kuery().all()]
     form.categories_ids.choices = [(c.id, c.title) for c in Category.query.all()]
     form.discount_value_type.choices = [
         (k.value, k.name) for k in DiscountValueTypeKinds

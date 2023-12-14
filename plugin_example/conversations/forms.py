@@ -28,7 +28,7 @@ class ConversationForm(FlaskForm):
     )
 
     def validate_to_user(self, field):
-        user = User.query.filter_by(username=field.data).first()
+        user = User.kuery().filter_by(username=field.data).first()
         if not user:
             raise ValidationError(
                 lazy_gettext("The username you entered does not exist.")

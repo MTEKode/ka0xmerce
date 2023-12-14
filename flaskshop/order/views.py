@@ -31,14 +31,14 @@ def index():
 
 @login_required
 def show(token):
-    order = Order.query.filter_by(token=token).first()
+    order = Order.kuery().filter_by(token=token).first()
     if not order.is_self_order:
         abort(403, lazy_gettext("This is not your order!"))
     return render_template(f"subdomains/{g.subdomain.name}/orders/details.html", order=order)
 
 
 def create_payment(token, payment_method):
-    order = Order.query.filter_by(token=token).first()
+    order = Order.kuery().filter_by(token=token).first()
     if order.status != OrderStatusKinds.unfulfilled.value:
         abort(403, lazy_gettext("This Order Can Not Pay"))
     payment_no = str(int(time.time())) + str(current_user.id)
@@ -109,7 +109,7 @@ def payment_success():
 
 @login_required
 def cancel_order(token):
-    order = Order.query.filter_by(token=token).first()
+    order = Order.kuery().filter_by(token=token).first()
     if not order.is_self_order:
         abort(403, "This is not your order!")
     order.cancel()
@@ -118,7 +118,7 @@ def cancel_order(token):
 
 @login_required
 def receive(token):
-    order = Order.query.filter_by(token=token).first()
+    order = Order.kuery().filter_by(token=token).first()
     order.update(
         status=OrderStatusKinds.completed.value,
         ship_status=ShipStatusKinds.received.value,

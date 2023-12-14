@@ -11,7 +11,7 @@ class Message(Model):
 
     @property
     def user(self):
-        return User.query.filter_by(id=self.user_id).first()
+        return User.kuery().filter_by(id=self.user_id).first()
 
 
 class Conversation(Model):
@@ -47,8 +47,8 @@ class Conversation(Model):
 
     @property
     def from_user(self):
-        return User.query.filter_by(id=self.from_user_id).first()
+        return User.kuery().filter_by(id=self.from_user_id).first()
 
     @property
     def to_user(self):
-        return User.query.filter_by(id=self.to_user_id).first()
+        return User.kuery().filter_by(id=self.to_user_id).first()

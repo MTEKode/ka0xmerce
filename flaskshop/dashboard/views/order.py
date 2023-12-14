@@ -7,7 +7,7 @@ from flaskshop.order.models import Order
 
 def orders():
     page = request.args.get("page", type=int, default=1)
-    query = Order.query.order_by(Order.id.desc())
+    query = Order.kuery().order_by(Order.id.desc())
 
     status = request.args.get("status", type=int)
     if status:

@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from flask import url_for
+from flask import g, url_for
 from flask_login import current_user
 
 from flaskshop.account.models import User, UserAddress
@@ -14,6 +14,7 @@ from flaskshop.constant import (
 from flaskshop.database import Column, Model, db
 from flaskshop.discount.models import Voucher
 from flaskshop.product.models import ProductVariant
+from flaskshop.subdomain.models import Subdomain
 
 # from sqlalchemy.dialects.mysql import TINYINT
 
@@ -32,6 +33,7 @@ class Order(Model):
     shipping_method_name = Column(db.String(100))
     shipping_method_id = Column(db.Integer())
     ship_status = Column(db.Integer())
+    subdomain_id = Column(db.Integer())
 
     def __str__(self):
         return f"#{self.identity}"
@@ -142,6 +144,10 @@ class Order(Model):
     def total_human(self):
         return "$" + str(self.total)
 
+    @property
+    def subdomaid(self):
+        return Subdomain.get_by_id(self.subdomain_id)
+
     @classmethod
     def get_current_user_orders(cls):
         if current_user.is_authenticated:
@@ -249,6 +255,11 @@ class Order(Model):
             user_id=self.user_id,
             type_=OrderEvents.order_delivered.value,
         )
+
+    @classmethod
+    def kuery(cls):
+        return cls.query.filter_by(subdomain_id=g.subdomain.id)
+
 
 
 class OrderLine(Model):

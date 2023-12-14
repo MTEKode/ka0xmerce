@@ -154,7 +154,7 @@ class NewConversation(MethodView):
         if form.validate():
             check_message_box_space()
 
-            to_user = User.query.filter_by(username=form.to_user.data).first()
+            to_user = User.kuery().filter_by(username=form.to_user.data).first()
 
             # this is the shared id between conversations because the messages
             # are saved on both ends

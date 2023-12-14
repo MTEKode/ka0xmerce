@@ -19,10 +19,9 @@ from flaskshop.extensions import (
 from flaskshop.plugin import manager, spec
 from flaskshop.plugin.models import PluginRegistry
 from flaskshop.settings import Config
+from flaskshop.subdomain.commands import create_emeraldlion_subdomain, create_starboy_subdomain
+from flaskshop.subdomain.models import find_subdomain
 from flaskshop.utils import jinja_global_varibles, log_slow_queries
-
-from domains.subdomain.models import find_subdomain
-from domains.subdomain.commands import create_emeraldlion_subdomain, create_starboy_subdomain
 
 def create_app(config_object=Config):
     app = Flask(__name__.split(".")[0])

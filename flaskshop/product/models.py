@@ -1,6 +1,6 @@
 import itertools
 
-from flask import current_app, request, url_for
+from flask import current_app, g, request, url_for
 from sqlalchemy import desc
 from sqlalchemy.ext.mutable import MutableDict
 
@@ -8,15 +8,16 @@ from flaskshop.corelib.db import PropsItem
 from flaskshop.corelib.mc import cache, cache_by_args, rdb
 from flaskshop.database import Column, Model, db
 from flaskshop.settings import Config
+from flaskshop.subdomain.models import Subdomain
 
-MC_KEY_FEATURED_PRODUCTS = "product:featured:{}"
-MC_KEY_PRODUCT_IMAGES = "product:product:{}:images"
-MC_KEY_PRODUCT_VARIANT = "product:product:{}:variant"
-MC_KEY_PRODUCT_DISCOUNT_PRICE = "product:product:{}:discount_price"
-MC_KEY_ATTRIBUTE_VALUES = "product:attribute:values:{}"
-MC_KEY_COLLECTION_PRODUCTS = "product:collection:{}:products:{}"
-MC_KEY_CATEGORY_PRODUCTS = "product:category:{}:products:{}"
-MC_KEY_CATEGORY_CHILDREN = "product:category:{}:children"
+MC_KEY_FEATURED_PRODUCTS = "{}:product:featured:{}"
+MC_KEY_PRODUCT_IMAGES = "{}:product:product:{}:images"
+MC_KEY_PRODUCT_VARIANT = "{}:product:product:{}:variant"
+MC_KEY_PRODUCT_DISCOUNT_PRICE = "{}:product:product:{}:discount_price"
+MC_KEY_ATTRIBUTE_VALUES = "{}:product:attribute:values:{}"
+MC_KEY_COLLECTION_PRODUCTS = "{}:product:collection:{}:products:{}"
+MC_KEY_CATEGORY_PRODUCTS = "{}:product:category:{}:products:{}"
+MC_KEY_CATEGORY_CHILDREN = "{}:product:category:{}:children"
 
 
 class Product(Model):
@@ -32,6 +33,8 @@ class Product(Model):
     product_type_id = Column(db.Integer())
     attributes = Column(MutableDict.as_mutable(db.JSON()))
     description = Column(db.Text())
+    subdomain_id = Column(db.Integer())
+
     if Config.USE_REDIS:
         description = PropsItem("description")
 
@@ -45,7 +48,7 @@ class Product(Model):
         return url_for("product.show", id=self.id)
 
     @property
-    @cache(MC_KEY_PRODUCT_IMAGES.format("{self.id}"))
+    @cache_by_args(MC_KEY_PRODUCT_IMAGES.format("{self.subdomain}", "{self.id}"))
     def images(self):
         return ProductImage.query.filter(ProductImage.product_id == self.id).all()
 
@@ -64,6 +67,10 @@ class Product(Model):
         return Category.get_by_id(self.category_id)
 
     @property
+    def subdomain(self):
+        return Subdomain.get_by_id(self.subdomain_id)
+
+    @property
     def product_type(self):
         return ProductType.get_by_id(self.product_type_id)
 
@@ -74,7 +81,7 @@ class Product(Model):
         return False
 
     @property
-    @cache(MC_KEY_PRODUCT_DISCOUNT_PRICE.format("{self.id}"))
+    @cache_by_args(MC_KEY_PRODUCT_DISCOUNT_PRICE.format("{self.subdomain}", "{self.id}"))
     def discounted_price(self):
         from flaskshop.discount.models import Sale
 
@@ -95,7 +102,7 @@ class Product(Model):
         return "Y" if self.on_sale else "N"
 
     @property
-    @cache(MC_KEY_PRODUCT_VARIANT.format("{self.id}"))
+    @cache_by_args(MC_KEY_PRODUCT_VARIANT.format("{self.subdomain}", "{self.id}"))
     def variant(self):
         return ProductVariant.query.filter(ProductVariant.product_id == self.id).all()
 
@@ -108,9 +115,9 @@ class Product(Model):
         return items
 
     @classmethod
-    @cache(MC_KEY_FEATURED_PRODUCTS.format("{num}"))
+    @cache_by_args(MC_KEY_FEATURED_PRODUCTS.format("{self.subdomain}", "{num}"))
     def get_featured_product(cls, num=8):
-        return cls.query.filter_by(is_featured=True).limit(num).all()
+        return cls.kuery().filter_by(is_featured=True, subdomain_id=g.subdomain.id).limit(num).all()
 
     def update_images(self, new_images):
         origin_ids = (
@@ -209,6 +216,9 @@ class Product(Model):
 
             Item.delete(target)
 
+    @classmethod
+    def kuery(cls):
+        return cls.query.filter_by(subdomain_id=g.subdomain.id)
 
 class Category(Model):
     __tablename__ = "product_category"
@@ -229,10 +239,10 @@ class Category(Model):
     @property
     def products(self):
         all_category_ids = [child.id for child in self.children] + [self.id]
-        return Product.query.filter(Product.category_id.in_(all_category_ids)).all()
+        return Product.kuery().filter(Product.category_id.in_(all_category_ids)).all()
 
     @property
-    @cache(MC_KEY_CATEGORY_CHILDREN.format("{self.id}"))
+    @cache_by_args(MC_KEY_CATEGORY_CHILDREN.format("{self.subdomain}", "{self.id}"))
     def children(self):
         return Category.query.filter(Category.parent_id == self.id).all()
 
@@ -249,11 +259,11 @@ class Category(Model):
         return attr_filter
 
     @classmethod
-    @cache_by_args(MC_KEY_CATEGORY_PRODUCTS.format("{category_id}", "{page}"))
+    @cache_by_args(MC_KEY_CATEGORY_PRODUCTS.format("{self.subdomain}", "{category_id}", "{page}"))
     def get_product_by_category(cls, category_id, page):
         category = Category.get_by_id(category_id)
         all_category_ids = [child.id for child in category.children] + [category.id]
-        query = Product.query.filter(Product.category_id.in_(all_category_ids))
+        query = Product.kuery().filter(Product.category_id.in_(all_category_ids))
         ctx, query = get_product_list_context(query, category)
         pagination = query.paginate(page, per_page=16)
         del pagination.query
@@ -268,7 +278,7 @@ class Category(Model):
         for child in self.children:
             child.parent_id = 0
             db.session.add(child)
-        need_update_products = Product.query.filter_by(category_id=self.id).all()
+        need_update_products = Product.kuery().filter_by(category_id=self.id).all()
         for product in need_update_products:
             product.category_id = 0
             db.session.add(product)
@@ -404,7 +414,7 @@ class ProductType(Model):
 
         for item in itertools.chain(need_del_product_attrs, need_del_variant_attrs):
             item.delete(commit=False)
-        need_update_products = Product.query.filter_by(product_type_id=self.id).all()
+        need_update_products = Product.kuery().filter_by(product_type_id=self.id).all()
         for product in need_update_products:
             product.product_type_id = 0
             db.session.add(product)
@@ -504,7 +514,7 @@ class ProductAttribute(Model):
         return self.title
 
     @property
-    @cache(MC_KEY_ATTRIBUTE_VALUES.format("{self.id}"))
+    @cache_by_args(MC_KEY_ATTRIBUTE_VALUES.format("{self.subdomain}", "{self.id}"))
     def values(self):
         return AttributeChoiceValue.query.filter(
             AttributeChoiceValue.attribute_id == self.id
@@ -623,7 +633,7 @@ class ProductImage(Model):
 
     @staticmethod
     def clear_mc(target):
-        rdb.delete(MC_KEY_PRODUCT_IMAGES.format(target.product_id))
+        rdb.delete(MC_KEY_PRODUCT_IMAGES.format(target.product_id, target.subdomain))
 
     @classmethod
     def __flush_insert_event__(cls, target):
@@ -665,7 +675,7 @@ class Collection(Model):
 
     @property
     def products(self):
-        return Product.query.filter(Product.id.in_(self.products_ids)).all()
+        return Product.kuery().filter(Product.id.in_(self.products_ids)).all()
 
     @property
     def attr_filter(self):
@@ -712,7 +722,7 @@ class ProductCollection(Model):
     collection_id = Column(db.Integer())
 
     @classmethod
-    @cache_by_args(MC_KEY_COLLECTION_PRODUCTS.format("{collection_id}", "{page}"))
+    @cache_by_args(MC_KEY_COLLECTION_PRODUCTS.format("{self.subdomain}", "{collection_id}", "{page}"))
     def get_product_by_collection(cls, collection_id, page):
         collection = Collection.get_by_id(collection_id)
         at_ids = (
@@ -720,7 +730,7 @@ class ProductCollection(Model):
             .filter(ProductCollection.collection_id == collection.id)
             .all()
         )
-        query = Product.query.filter(Product.id.in_(id for id, in at_ids))
+        query = Product.kuery().filter(Product.id.in_(id for id, in at_ids))
         ctx, query = get_product_list_context(query, collection)
         pagination = query.paginate(page, per_page=16)
         del pagination.query

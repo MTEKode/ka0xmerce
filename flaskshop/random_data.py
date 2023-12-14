@@ -361,7 +361,7 @@ def create_fake_collection(placeholder_dir, collection_data):
     collection = Collection.get_or_create(
         title=collection_data["name"], background_img=background_img.as_posix()
     )[0]
-    products = Product.query.limit(4)
+    products = Product.kuery().limit(4)
     for product in products:
         ProductCollection.create(product_id=product.id, collection_id=collection.id)
     return collection
@@ -530,7 +530,7 @@ def create_orders(how_many=10):
 
 # step24
 def create_fake_order(discounts):
-    user = User.query.order_by(func.random()).first()
+    user = User.kuery().order_by(func.random()).first()
     address = create_fake_address()
     status = random.choice(list(OrderStatusKinds)).value
     order_data = {
@@ -564,7 +564,7 @@ def create_order_lines(order, discounts, how_many=10):
 
 # step26
 def create_order_line(order, discounts):
-    product = Product.query.order_by(func.random()).first()
+    product = Product.kuery().order_by(func.random()).first()
     variant = product.variant[0]
     quantity = random.randrange(1, 5)
     variant.quantity += quantity
@@ -613,7 +613,7 @@ def create_fake_sale():
         discount_value_type=DiscountValueTypeKinds.percent.value,
         discount_value=random.choice([10, 20, 30, 40, 50]),
     )
-    for product in Product.query.order_by(func.random()).all()[:4]:
+    for product in Product.kuery().order_by(func.random()).all()[:4]:
         SaleProduct.create(sale_id=sale.id, product_id=product.id)
     return sale
 
