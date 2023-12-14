@@ -58,3 +58,4 @@ migrations/
 /women_shop_empty.backup
 /.flaskenv
 /.history
+/flaskshop/static/build

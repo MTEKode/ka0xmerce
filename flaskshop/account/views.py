@@ -66,6 +66,7 @@ def signup():
             email=form.email.data.lower(),
             password=form.password.data,
             is_active=True,
+            subdomain_id=g.subdomain.id
         )
         login_user(user)
         flash(lazy_gettext("You are signed up."), "success")

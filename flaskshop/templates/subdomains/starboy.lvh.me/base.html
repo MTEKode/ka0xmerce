@@ -72,8 +72,8 @@
                 <div class="row no-gutters">
                     <div class="col-8 col-md-4 navbar__logo">
                         <div class="menu-icon-mobile d-md-none navbar__brand__menu-toggle closed open">
-                            <img data-src="{{ url_for('static', filename='img/mobile-menu.svg') }}" width="28px"
-                                 height="20px"></img>
+                            <svg data-src="{{ url_for('static', filename='img/mobile-menu.svg') }}" width="28px"
+                                 height="20px"></svg>
                         </div>
                         <a href="{{ url_for('public.home') }}">
                             <img src="{{ url_for('static', filename='subdomains/starboy.lvh.me/logo.png') }}"
@@ -261,7 +261,7 @@
     </footer>
 {% endblock %}
 {% block footer_scripts %}
-    <script src="{{ url_for('static', filename='build/storefront.js') }}"></script>
+    <script src="{{ url_for('static', filename='build/starboy.lvh.me/storefront.js') }}"></script>
     {% if config.GA_MEASUREMENT_ID %}
         <script async src="https://www.googletagmanager.com/gtag/js?id={{ config.GA_MEASUREMENT_ID }}"></script>
         <script>

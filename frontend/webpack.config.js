@@ -3,26 +3,26 @@ const TerserPlugin = require('terser-webpack-plugin');
 const path = require('path');
 
 const resolve = path.resolve.bind(path, __dirname);
-// take debug mode from the environment
 const debug = process.env.NODE_ENV === 'production' ? 'production' : 'development';
 
-const extractCssPlugin = new MiniCssExtractPlugin({
-    filename: '[name].css',
-    chunkFilename: '[name].css',
-});
-
-const output = {
-    path: resolve('../flaskshop/static/build/'),
-    filename: '[name].js',
-    chunkFilename: '[name].js'
+const entryItems = {
+    'starboy.lvh.me': './starboy.lvh.me/js/storefront.js',
+    'emeraldlion.lvh.me': './emeraldlion.lvh.me/js/storefront.js'
 };
 
-const entry_items = {'storefront': './js/storefront.js'}
+const extractCssPlugin = new MiniCssExtractPlugin({
+    filename: '[name]/storefront.css',
+    chunkFilename: '[name]/storefront.css',
+});
 
 const config = {
     mode: debug,
-    entry: entry_items,
-    output,
+    entry: entryItems,
+    output: {
+        path: resolve('../flaskshop/static/build/'),
+        filename: '[name]/storefront.js',
+        chunkFilename: '[name]/storefront.js'
+    },
     devServer: {
         headers: {'Access-Control-Allow-Origin': '*'},
     },
@@ -44,15 +44,6 @@ const config = {
                         },
                     },
                     {
-                        loader: 'postcss-loader',
-                        options: {
-                            sourceMap: true,
-                            postcssOptions: {
-                                plugins: [require('autoprefixer')({})]
-                            }
-                        },
-                    },
-                    {
                         loader: 'sass-loader',
                         options: {
                             sourceMap: true,
@@ -62,7 +53,7 @@ const config = {
             },
             {
                 test: /\.css$/,
-                use: ['style-loader', 'css-loader']
+                use: [MiniCssExtractPlugin.loader, 'css-loader']
             },
             {
                 test: /\.(eot|otf|png|svg|jpg|ttf|woff|woff2)(\?v=[0-9.]+)?$/,
@@ -72,7 +63,13 @@ const config = {
                         loader: 'file-loader',
                         options: {
                             esModule: false,
-                            name: '[name].[ext]'
+                            name: '[name].[ext]',
+                            outputPath: (url, resourcePath, context) => {
+                                const [frontendDir, projectDir] = ['frontend', 'flaskshop/static'];
+                                const relativePath = path.relative(frontendDir, resourcePath);
+                                const [directory] = relativePath.split(path.sep);
+                                return path.join(projectDir, 'build', directory, url);
+                            },
                         },
                     },
                 ],
