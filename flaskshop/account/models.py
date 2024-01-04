@@ -14,15 +14,17 @@ from flaskshop.subdomain.models import Subdomain
 
 class User(Model, UserMixin):
     __tablename__ = "account_user"
-    username = Column(db.String(80), unique=True, nullable=False, comment="user`s name")
     email = Column(db.String(80), unique=True, nullable=False)
     #: The hashed password
     _password = db.Column(db.String(255), nullable=False)
-    nick_name = Column(db.String(255))
     is_active = Column(db.Boolean(), default=False)
     open_id = Column(db.String(80), index=True)
     session_key = Column(db.String(80), index=True)
     subdomain_id = Column(db.Integer())
+
+    __table_args__ = (
+        db.UniqueConstraint('email', 'subdomain_id', name='uq_email_subdomain'),
+    )
 
     def __init__(self, username, email, password, **kwargs):
         super().__init__(username=username, email=email, password=password, **kwargs)

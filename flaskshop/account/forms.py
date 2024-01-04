@@ -12,19 +12,6 @@ from .models import User
 class RegisterForm(FlaskForm):
     """Register form."""
 
-    username = StringField(
-        lazy_gettext("Username"),
-        validators=[
-            DataRequired(),
-            Length(min=3, max=25),
-            Regexp(
-                "^[a-zA-Z0-9]*$",
-                message=lazy_gettext(
-                    "The username should contain only a-z, A-Z and 0-9."
-                ),
-            ),
-        ],
-    )
     email = StringField(
         lazy_gettext("Email"),
         validators=[DataRequired(), Email(), Length(min=6, max=40)],

@@ -6,8 +6,8 @@ const resolve = path.resolve.bind(path, __dirname);
 const debug = process.env.NODE_ENV === 'production' ? 'production' : 'development';
 
 const entryItems = {
+    'emeraldlion.lvh.me': './emeraldlion.lvh.me/js/storefront.js',
     'starboy.lvh.me': './starboy.lvh.me/js/storefront.js',
-    'emeraldlion.lvh.me': './emeraldlion.lvh.me/js/storefront.js'
 };
 
 const extractCssPlugin = new MiniCssExtractPlugin({

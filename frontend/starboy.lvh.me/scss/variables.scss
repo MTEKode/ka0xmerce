@@ -3,11 +3,19 @@ $global-padding: 1rem;
 $global-margin: 1rem;
 $button-border-radius: 12px;
 
+// CUSTOM COLORS
+$starboy1: #9DEABE;
+$starboy2: #F2E399;
+$starboy3: #BF4542;
+$starboy4: #404040;
+$starboy5: #FFFDE8;
+$starboy6: #72AD81;
+
 // COLORS
 $body-color: #333333;
 $white: #fff;
 $light-gray: #f1f5f5;
-$gray: #d3d1d0;
+$gray: $starboy5;
 $darken-gray: darken($gray, 10%);
 $skull-gray: #828282;
 $blue: #26a5d4;
@@ -27,12 +35,12 @@ $h2-font-size: 1.3rem;
 $h3-font-size: 1rem;
 
 $theme-colors: (
-  primary: $light-turquoise,
-  secondary: $white,
-  success: $green,
+  primary: $starboy1,
+  secondary: $starboy5,
+  success: $starboy6,
   info: $turquoise,
-  warning: #ffc107,
-  danger: $red,
-  light: #f8f9fa,
-  dark: #343a40
+  warning: $starboy2,
+  danger: $starboy3,
+  light: $starboy5,
+  dark: $starboy4
 );

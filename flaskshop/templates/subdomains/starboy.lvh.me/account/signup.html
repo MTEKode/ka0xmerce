@@ -19,7 +19,6 @@
         <fieldset>
           <h3>{% trans %}Create an account{% endtrans %}</h3>
           {{ form.csrf_token }}
-          {{ render_field(form.username) }}
           {{ render_field(form.email) }}
           {{ render_field(form.password) }}
           {{ render_field(form.confirm) }}
