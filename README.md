@@ -1,5 +1,5 @@
+[![Open in Coder](https://cd6ciap0cvtj8.pit-1.try.coder.app/open-in-coder.svg)](https://cd6ciap0cvtj8.pit-1.try.coder.app/templates/eshop/workspace)
 # Flask Shop - An Amazing Project
-
 
 ## Introduction
 This project is a front page copy of [saleor](https://github.com/mirumee/saleor) old version, but written with flask.
